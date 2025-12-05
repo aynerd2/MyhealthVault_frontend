@@ -13,6 +13,42 @@ class ApiClient {
     this.baseURL = baseURL;
   }
 
+
+
+  async getAllUsers(params?: { 
+    role?: string; 
+    limit?: number; 
+    offset?: number;
+    search?: string;
+    departmentId?: string;
+    status?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.role) queryParams.append('role', params.role);
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.offset) queryParams.append('offset', params.offset.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.departmentId) queryParams.append('departmentId', params.departmentId);
+    if (params?.status) queryParams.append('status', params.status);
+    
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/admin/users?${queryString}` : '/admin/users';
+    
+    return this.get<{ count: number; data: any[] }>(endpoint);
+  }
+
+
+  async updateUserStatus(userId: string, isActive: boolean) {
+    return this.put<{ message: string; data: any }>(`/admin/users/${userId}/status`, { isActive });
+  }
+
+  async deleteUser(userId: string) {
+    return this.delete<{ message: string }>(`/admin/users/${userId}`);
+  }
+
+
+
+
   private async getAccessToken(): Promise<string | null> {
     if (typeof window === 'undefined') return null;
     return localStorage.getItem('accessToken');
