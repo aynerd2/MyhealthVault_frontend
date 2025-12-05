@@ -20,7 +20,7 @@ import { Users } from 'lucide-react';
 export default function HealthcareDashboard() {
 
  // ⚠️ CRITICAL: Role protection - only allow healthcare workers
-  const { isAuthorized, isChecking } = useRoleProtection(['doctor', 'nurse', 'admin']);
+  const { isAuthorized, isChecking } = useRoleProtection(['doctor', 'nurse', 'super_admin']);
 
 
 
