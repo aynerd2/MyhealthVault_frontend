@@ -348,6 +348,73 @@ class ApiClient {
 
 
 
+// ============================================
+  // TEST RESULTS
+  // ============================================
+
+  async getPatientTestResults(patientId: string, hospitalId?: string) {
+    const query = hospitalId ? `?hospitalId=${hospitalId}` : '';
+    return this.get<{ count: number; data: any[] }>(`/test-results/patient/${patientId}${query}`);
+  }
+
+  async createTestResult(data: {
+    patientId: string;
+    testName: string;
+    testType: string;
+    testDate: string;
+    result: string;
+    hospitalName: string;
+    normalRange?: string;
+    notes?: string;
+    abnormalFlag?: boolean;
+  }) {
+    return this.post<{ message: string; data: any }>('/test-results', data);
+  }
+
+  async getTestResult(testId: string) {
+    return this.get<{ data: any }>(`/test-results/${testId}`);
+  }
+
+  async updateTestResult(testId: string, data: any) {
+    return this.put<{ message: string; data: any }>(`/test-results/${testId}`, data);
+  }
+
+  async deleteTestResult(testId: string) {
+    return this.delete<{ message: string }>(`/test-results/${testId}`);
+  }
+
+  async uploadTestFile(testId: string, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = await this.getAccessToken();
+    const headers: Record<string, string> = {};
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${this.baseURL}/test-results/${testId}/upload`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Upload failed');
+    }
+
+    return data;
+  }
+
+
+
+
+
+  
+
+
 }
 
 export const api = new ApiClient(API_URL);
