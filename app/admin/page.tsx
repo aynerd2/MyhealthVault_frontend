@@ -126,8 +126,11 @@ export default function AdminDashboard() {
 
   if (!isAuthorized) return null;
 
-  const pendingUsers = pendingData?.users || [];
-  const allUsers = usersData?.users || [];
+  // const pendingUsers = pendingData?.users || [];
+  // const allUsers = usersData?.users || [];
+
+  const pendingUsers = pendingData?.data || [];
+const allUsers = usersData?.data || [];
   
   // Calculate stats
   const totalUsers = allUsers.length;
