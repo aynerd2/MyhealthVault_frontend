@@ -38,29 +38,28 @@ export default function AdminDashboard() {
 
 
   // Fetch pending approvals
-  const { data: pendingData } = useQuery({
-    queryKey: ['pendingApprovals'],
-    queryFn: async () => {
-      const res = await apiClient.getPendingApprovals();
-      return res.data;
-    },
-    enabled: isAuthorized,
-  });
+const { data: pendingData } = useQuery<{ count: number; data: any[] }>({
+  queryKey: ['pendingApprovals'],
+  queryFn: async () => {
+    const res = await apiClient.getPendingApprovals();
+    return res; // ✅ Return entire response, not just res.data
+  },
+  enabled: isAuthorized,
+});
 
-  // Fetch all users
-  const { data: usersData, isLoading: loadingUsers } = useQuery({
-    queryKey: ['allUsers', filterRole],
-    queryFn: async () => {
-      const params: any = { limit: 100 };
-      if (filterRole !== 'all') {
-        params.role = filterRole;
-      }
-      const res = await apiClient.getAllUsers(params);
-      return res.data;
-    },
-    enabled: isAuthorized && activeTab === 'users',
-  });
-
+// Fetch all users
+const { data: usersData, isLoading: loadingUsers } = useQuery<{ count: number; data: any[] }>({
+  queryKey: ['allUsers', filterRole],
+  queryFn: async () => {
+    const params: any = { limit: 100 };
+    if (filterRole !== 'all') {
+      params.role = filterRole;
+    }
+    const res = await apiClient.getAllUsers(params);
+    return res; // ✅ Return entire response, not just res.data
+  },
+  enabled: isAuthorized && activeTab === 'users',
+});
   // Approve mutation
   const approveMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: 'doctor' | 'nurse' }) => {
