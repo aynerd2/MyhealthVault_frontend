@@ -1,12 +1,12 @@
-// // lib/useRoleProtection.ts
+// lib/useRoleProtection.ts
 
 'use client';
 
-import { useAuth } from '@/app/providers/AuthProvider';
+import { useAuth, UserRole } from '@/app/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export function useRoleProtection(allowedRoles: string[]) {
+export function useRoleProtection(allowedRoles: UserRole[]) {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -34,17 +34,22 @@ export function useRoleProtection(allowedRoles: string[]) {
       return;
     }
 
-    // Unauthorized - redirect to correct dashboard
+    // Unauthorized - redirect to correct dashboard based on role
     setIsChecking(false);
     
-    if (user.role === 'admin') {
-      router.push('/admin');
-    } else if (user.role === 'patient') {
-      router.push('/patient');
-    } else if (['doctor', 'nurse'].includes(user.role)) {
-      router.push('/healthcare');
-    } else if (user.role === 'pending_approval') {
-      router.push('/pending-approval');
+    const dashboardRoutes: Record<UserRole, string> = {
+      'super_admin': '/dashboard/super-admin',
+      'hospital_admin': '/dashboard/hospital-admin',
+      'doctor': '/dashboard/doctor',
+      'nurse': '/dashboard/nurse',
+      'department_staff': '/dashboard/department',
+      'patient': '/dashboard/patient',
+      'pending_approval': '/pending-approval',
+    };
+
+    const route = dashboardRoutes[user.role];
+    if (route) {
+      router.push(route);
     } else {
       router.push('/login');
     }
@@ -57,4 +62,3 @@ export function useRoleProtection(allowedRoles: string[]) {
     profile: user, // Return user from AuthProvider
   };
 }
-
