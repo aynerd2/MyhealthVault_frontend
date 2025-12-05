@@ -38,53 +38,53 @@ export default function HealthcareDashboard() {
 
  
 
-   // Fetch user profile
-  const { data: profile } = useQuery({
-    queryKey: ['profile'],
-    queryFn: async () => {
-      const res = await apiClient.getProfile();
-      return res.data;
-    },
-  });
+ // Fetch user profile
+const { data: profile } = useQuery({
+  queryKey: ['profile'],
+  queryFn: async () => {
+    const res = await apiClient.getProfile();
+    return res.user; // ✅ Fixed
+  },
+});
 
-  // Search patients
-  const { data: searchResults = [], isLoading: searching } = useQuery({
-    queryKey: ['patientSearch', searchQuery],
-    queryFn: async () => {
-      if (searchQuery.length < 2) return [];
-      const res = await apiClient.searchPatients(searchQuery);
-      return res.data;
-    },
-    enabled: searchQuery.length >= 2,
-  });
+// Search patients
+const { data: searchResults = [], isLoading: searching } = useQuery({
+  queryKey: ['patientSearch', searchQuery],
+  queryFn: async () => {
+    if (searchQuery.length < 2) return [];
+    const res = await apiClient.searchPatients(searchQuery);
+    return res.data;
+  },
+  enabled: searchQuery.length >= 2,
+});
 
-  // Fetch selected patient's data
-  const { data: patientRecords = [] } = useQuery({
-    queryKey: ['patientRecords', selectedPatient?._id],
-    queryFn: async () => {
-      const res = await apiClient.getMedicalRecords(selectedPatient._id);
-      return res.data;
-    },
-    enabled: !!selectedPatient?._id,
-  });
+// Fetch selected patient's data
+const { data: patientRecords = [] } = useQuery({
+  queryKey: ['patientRecords', selectedPatient?._id],
+  queryFn: async () => {
+    const res = await apiClient.getPatientMedicalRecords(selectedPatient._id); // ✅ Fixed method name
+    return res.data;
+  },
+  enabled: !!selectedPatient?._id,
+});
 
-  const { data: patientPrescriptions = [] } = useQuery({
-    queryKey: ['patientPrescriptions', selectedPatient?._id],
-    queryFn: async () => {
-      const res = await apiClient.getPrescriptions(selectedPatient._id);
-      return res.data;
-    },
-    enabled: !!selectedPatient?._id,
-  });
+const { data: patientPrescriptions = [] } = useQuery({
+  queryKey: ['patientPrescriptions', selectedPatient?._id],
+  queryFn: async () => {
+    const res = await apiClient.getPatientPrescriptions(selectedPatient._id); // ✅ Fixed method name
+    return res.data;
+  },
+  enabled: !!selectedPatient?._id,
+});
 
-  const { data: patientTests = [] } = useQuery({
-    queryKey: ['patientTests', selectedPatient?._id],
-    queryFn: async () => {
-      const res = await apiClient.getTestResults(selectedPatient._id);
-      return res.data;
-    },
-    enabled: !!selectedPatient?._id,
-  });
+const { data: patientTests = [] } = useQuery({
+  queryKey: ['patientTests', selectedPatient?._id],
+  queryFn: async () => {
+    const res = await apiClient.getPatientTestResults(selectedPatient._id); // ✅ Fixed method name
+    return res.data;
+  },
+  enabled: !!selectedPatient?._id,
+});
 
   // Handlers
   const handleSelectPatient = (patient: any) => {
