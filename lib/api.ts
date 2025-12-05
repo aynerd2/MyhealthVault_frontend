@@ -191,16 +191,7 @@ class ApiClient {
   }
 
   // MEDICAL RECORDS (Updated for V2)
-  async getPatientMedicalRecords(patientId: string, hospitalId?: string) {
-    const query = hospitalId ? `?hospitalId=${hospitalId}` : '';
-    return this.get<{ count: number; data: any[] }>(`/medical-records/patient/${patientId}${query}`);
-  }
-
-  // PRESCRIPTIONS (Updated for V2)
-  async getPatientPrescriptions(patientId: string, hospitalId?: string) {
-    const query = hospitalId ? `?hospitalId=${hospitalId}` : '';
-    return this.get<{ count: number; data: any[] }>(`/prescriptions/patient/${patientId}${query}`);
-  }
+ 
 
   // ADMIN
   async getPendingApprovals() {
@@ -272,6 +263,88 @@ class ApiClient {
     return this.get<{ data: any }>(`/patients/${patientId}`);
   }
 
+
+
+   async getPatientPrescriptions(patientId: string, hospitalId?: string) {
+    const query = hospitalId ? `?hospitalId=${hospitalId}` : '';
+    return this.get<{ count: number; data: any[] }>(`/prescriptions/patient/${patientId}${query}`);
+  }
+
+  async createPrescription(data: {
+    patientId: string;
+    medication: string;
+    dosage: string;
+    frequency: string;
+    duration: string;
+    instructions: string;
+    notes?: string;
+    refillable?: boolean;
+    refillsAllowed?: number;
+  }) {
+    return this.post<{ message: string; data: any }>('/prescriptions', data);
+  }
+
+  async getPrescription(prescriptionId: string) {
+    return this.get<{ data: any }>(`/prescriptions/${prescriptionId}`);
+  }
+
+  async updatePrescriptionStatus(prescriptionId: string, status: 'active' | 'completed' | 'cancelled', reason?: string) {
+    return this.put<{ message: string; data: any }>(`/prescriptions/${prescriptionId}/status`, { status, reason });
+  }
+
+  async requestPrescriptionRefill(prescriptionId: string) {
+    return this.post<{ message: string; data: any }>(`/prescriptions/${prescriptionId}/refill`, {});
+  }
+
+  // ============================================
+  // MEDICAL RECORDS
+  // ============================================
+
+  async getPatientMedicalRecords(patientId: string, hospitalId?: string) {
+    const query = hospitalId ? `?hospitalId=${hospitalId}` : '';
+    return this.get<{ count: number; data: any[] }>(`/medical-records/patient/${patientId}${query}`);
+  }
+
+  async createMedicalRecord(data: {
+    patientId: string;
+    diagnosis: string;
+    symptoms?: string;
+    treatment?: string;
+    notes?: string;
+    visitDate: string;
+    visitType?: string;
+    vitalSigns?: any;
+  }) {
+    return this.post<{ message: string; data: any }>('/medical-records', data);
+  }
+
+  async getMedicalRecord(recordId: string) {
+    return this.get<{ data: any }>(`/medical-records/${recordId}`);
+  }
+
+  async updateMedicalRecord(recordId: string, data: any) {
+    return this.put<{ message: string; data: any }>(`/medical-records/${recordId}`, data);
+  }
+
+  async getHospitalMedicalRecords(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    departmentId?: string;
+    doctorId?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.departmentId) queryParams.append('departmentId', params.departmentId);
+    if (params?.doctorId) queryParams.append('doctorId', params.doctorId);
+    
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/medical-records/hospital/all?${queryString}` : '/medical-records/hospital/all';
+    
+    return this.get<{ count: number; total: number; page: number; pages: number; data: any[] }>(endpoint);
+  }
 
 
 
