@@ -27,7 +27,7 @@ import {apiClient} from '@/lib/api';
 export default function AdminDashboard() {
 
  const {logout} = useAuth();
-    const { isAuthorized, isChecking, profile } = useRoleProtection(['admin']);
+    const { isAuthorized, isChecking, profile } = useRoleProtection(['super_admin', 'hospital_admin'])
   const queryClient = useQueryClient();
   
   const [activeTab, setActiveTab] = useState<'overview' | 'approvals' | 'users'>('overview');
