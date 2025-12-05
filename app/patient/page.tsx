@@ -26,39 +26,40 @@ export default function PatientDashboard() {
 
 
  const { data: profile } = useQuery({
-    queryKey: ['profile'],
-    queryFn: async () => {
-      const res = await apiClient.getProfile();
-      return res.data;
-    },
-  });
+  queryKey: ['profile'],
+  queryFn: async () => {
+    const res = await apiClient.getProfile();
+    return res.user; // ✅ Changed from res.data to res.user
+  },
+});
 
-  const { data: medicalRecords = [] } = useQuery({
-    queryKey: ['medicalRecords', profile?._id],
-    queryFn: async () => {
-      const res = await apiClient.getMedicalRecords(profile._id);
-      return res.data;
-    },
-    enabled: !!profile?._id,
-  });
+const { data: medicalRecords = [] } = useQuery({
+  queryKey: ['medicalRecords', profile?._id],
+  queryFn: async () => {
+    const res = await apiClient.getPatientMedicalRecords(profile._id); // ✅ Fixed method name
+    return res.data;
+  },
+  enabled: !!profile?._id,
+});
 
-  const { data: prescriptions = [] } = useQuery({
-    queryKey: ['prescriptions', profile?._id],
-    queryFn: async () => {
-      const res = await apiClient.getPrescriptions(profile._id);
-      return res.data;
-    },
-    enabled: !!profile?._id,
-  });
+const { data: prescriptions = [] } = useQuery({
+  queryKey: ['prescriptions', profile?._id],
+  queryFn: async () => {
+    const res = await apiClient.getPatientPrescriptions(profile._id); // ✅ Fixed method name
+    return res.data;
+  },
+  enabled: !!profile?._id,
+});
 
-  const { data: testResults = [] } = useQuery({
-    queryKey: ['testResults', profile?._id],
-    queryFn: async () => {
-      const res = await apiClient.getTestResults(profile._id);
-      return res.data;
-    },
-    enabled: !!profile?._id,
-  });
+const { data: testResults = [] } = useQuery({
+  queryKey: ['testResults', profile?._id],
+  queryFn: async () => {
+    const res = await apiClient.getPatientTestResults(profile._id); // ✅ Fixed method name
+    return res.data;
+  },
+  enabled: !!profile?._id,
+});
+
 
   const stats = [
     {
