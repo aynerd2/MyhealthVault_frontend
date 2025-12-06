@@ -273,7 +273,7 @@ export default function LoginPage() {
                       } else if (account.email.includes('hospitaladmin')) {
                         setPassword('hospitaladmin123');
                       } else if (account.email.includes('labtech')) {
-                        setPassword('staff123');
+                        setPassword('password123');
                       } else {
                         setPassword('password123');
                       }

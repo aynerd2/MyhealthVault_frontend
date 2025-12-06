@@ -412,6 +412,32 @@ class ApiClient {
 
 
 
+  async uploadTestResultFile(orderId: string, file: File, notes?: string) {
+  const formData = new FormData();
+  formData.append('file', file);
+  if (notes) formData.append('notes', notes);
+
+  const token = await this.getAccessToken();
+  const headers: Record<string, string> = {};
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${this.baseURL}/test-orders/${orderId}/upload-result`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || 'Upload failed');
+  }
+
+  return data;
+}
+
   
 
 
